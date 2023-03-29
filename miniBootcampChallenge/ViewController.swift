@@ -27,6 +27,24 @@ class ViewController: UICollectionViewController {
 
 
 // TODO: 1.- Implement a function that allows the app downloading the images without freezing the UI or causing it to work unexpected way
+// MARK:  Extension to download all images with URLSession of native way
+extension UIImageView {
+    func loadFrom(url: URL) {
+        
+        let session = URLSession(configuration: .default)
+        
+        let tarea = session.dataTask(with: url) { datos, _, error in
+            if let datosSeguros = datos {
+                if let loadedImage = UIImage(data: datosSeguros) {
+                    DispatchQueue.main.async {
+                        self.image = loadedImage
+                    }
+                }
+            }
+        }
+        tarea.resume()
+    }
+}
 
 // TODO: 2.- Implement a function that allows to fill the collection view only when all photos have been downloaded, adding an animation for waiting the completion of the task.
 
@@ -40,10 +58,10 @@ extension ViewController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.cellID, for: indexPath) as? ImageCell else { return UICollectionViewCell() }
         
+        ///- Solution 1:
+        /// - * select the URL and it will send to func of extension wich will return the image
         let url = urls[indexPath.row]
-        let data = try? Data(contentsOf: url)
-        let image = UIImage(data: data!)
-        cell.display(image)
+        cell.imageView.loadFrom(url: url)
         
         return cell
     }
