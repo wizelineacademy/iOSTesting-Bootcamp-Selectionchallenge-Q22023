@@ -14,7 +14,7 @@ class ViewController: UICollectionViewController {
         static let columns: CGFloat = 3
         static var cellSize: CGFloat?
     }
-    // Array of downloaded images
+    // Array of downloaded imagesvar images: [UIImage] = []
     private lazy var images: [UIImage] = []
     // instance of url Array
     private lazy var urls: [URL] = URLProvider.urls
@@ -22,54 +22,53 @@ class ViewController: UICollectionViewController {
     private  let group = DispatchGroup()
     // activity Indicator
     private lazy var activityIndicatorView = UIActivityIndicatorView(style: .large)
-    
-    override func viewDidLoad() {
+     
+     override func viewDidLoad()   {
+         print(" aqui entro")
         super.viewDidLoad()
         title = Constants.title
         showActivityIndicator()
-        downloadImages(urls: urls) { images in
-            self.images = images // set the downloaded images on your data source
-            self.collectionView.reloadData() // reload the collection view to display the images
-        }
+         Task{
+              
+              await downloadImages(urls: urls)
+             func notifyCollectionView()-> Bool{
+                 true
+         }
+         }
     }
-    
     
 }
 
 
 // TODO: 1.- Implement a function that allows the app downloading the images without freezing the UI or causing it to work unexpected way
 extension ViewController {
-    func downloadImages(urls: [URL], completion: @escaping ([UIImage]) -> Void) {
+    
+    func downloadImages(urls: [URL]) async  -> Void {
+        self.group.enter()
+        print("si me llamaron")
         // Download each image asynchronously and add it to the images array
-        for url in urls {
-            self.group.enter()
-            
-            URLSession.shared.dataTask(with: url) { data, response, error in
-                defer { self.group.leave() }
-                
-                if let error = error {
-                    print("Error downloading image: \(error.localizedDescription)")
-                    return
-                }
-                
-                guard let data = data, let image = UIImage(data: data) else {
-                    print("Error creating image from data")
-                    return
-                }
-                
-                self.images.append(image)
-            }.resume()
-        }
         
-        // Notify the completion block when all images have been downloaded
-        self.group.notify(queue: DispatchQueue.main) {
+        for url in urls {
+            do {
+                let (data, _) = try await URLSession.shared.data(from: url)
+                guard let image = UIImage(data: data) else {
+                    print("Error creating image from data")
+                    continue
+                }
+                self.images.append(image)
+            } catch {
+                print("Error downloading image: \(error.localizedDescription)")
+                
+            }
+            print("apenas termine")
             
-            completion(self.images)
-            self.collectionView.reloadData()
-            self.activityIndicatorView.stopAnimating()
         }
+    
     }
+    
 }
+    
+    
 
 // TODO: 2.- Implement a function that allows to fill the collection view only when all photos have been downloaded, adding an animation for waiting the completion of the task.
 extension ViewController{
@@ -92,13 +91,14 @@ extension ViewController{
 // MARK: - UICollectionView DataSource, Delegate
 extension ViewController {
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        urls.count
+        
+
+        return urls.count
     }
     
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath)  -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.cellID, for: indexPath) as? ImageCell else { return UICollectionViewCell() }
-        self.group.wait()
-        let image = images[indexPath.item]
+        let image = self.images[indexPath.row]
         cell.imageView.image = image
         return cell
     }
@@ -124,35 +124,10 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
         Constants.cellSpacing
     }
 }
-func downloadImages(urls: [URL], completion: @escaping ([UIImage]) -> Void) {
-    // Create a dispatch group to track when all images have been downloaded
-    let group = DispatchGroup()
-    
-    var images: [UIImage] = []
-    
-    // Download each image asynchronously and add it to the images array
-    for url in urls {
-        group.enter()
-        
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            defer { group.leave() }
-            
-            if let error = error {
-                print("Error downloading image: \(error.localizedDescription)")
-                return
-            }
-            
-            guard let data = data, let image = UIImage(data: data) else {
-                print("Error creating image from data")
-                return
-            }
-            
-            images.append(image)
-        }.resume()
-    }
-    
-    // Notify the completion block when all images have been downloaded
-    group.notify(queue: DispatchQueue.main) {
-        completion(images)
+
+extension ViewController{
+    enum FetchError: Error {
+        case badID
+        case imageNotAbleToRender
     }
 }
