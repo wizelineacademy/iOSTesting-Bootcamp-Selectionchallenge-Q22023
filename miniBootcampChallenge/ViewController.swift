@@ -15,7 +15,7 @@ class ViewController: UICollectionViewController {
         static var cellSize: CGFloat?
     }
     
-    // instance of url Array
+    // Instance of url Array
     private lazy var urls: [URL] = URLProvider.urls
     // Create a dispatch group to track when all images have been downloaded
     private var images: [UIImage] = []
@@ -33,7 +33,7 @@ class ViewController: UICollectionViewController {
 
 // TODO: 1.- Implement a function that allows the app downloading the images without freezing the UI or causing it to work unexpected way
 extension ViewController {
-    
+    // function that communicates when all the images has been downloaded and also starts and finish the activityIndicatorView
     func downloadAndPopulateCollectionView() async {
         showActivityIndicator()
         do {
@@ -50,6 +50,7 @@ extension ViewController {
         }
     }
     
+    // Asinc await function that download all images asynchronously and return an awway of images.
     func downloadImages(from urls: [URL]) async throws -> [UIImage] {
         var images: [UIImage] = []
         
@@ -76,7 +77,7 @@ extension ViewController {
 
 // TODO: 2.- Implement a function that allows to fill the collection view only when all photos have been downloaded, adding an animation for waiting the completion of the task.
 extension ViewController{
-    
+    // activiti indicator that will be shown as first screen whiles images are getting downloaded
     func showActivityIndicator() {
         activityIndicatorView.color = .blue
         activityIndicatorView.hidesWhenStopped = true
@@ -125,7 +126,7 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
         Constants.cellSpacing
     }
 }
-
+// error handling for async await func
 extension ViewController{
     enum FetchError: Error {
         case imageNotAbleToRender
