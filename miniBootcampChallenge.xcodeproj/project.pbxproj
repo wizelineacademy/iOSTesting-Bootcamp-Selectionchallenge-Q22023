@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		64803F7429F763C80061F1AC /* Loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64803F7329F763C80061F1AC /* Loader.swift */; };
+		64803F7629F763ED0061F1AC /* Loader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 64803F7529F763ED0061F1AC /* Loader.xib */; };
 		9AA8DE852804972200C867C8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA8DE842804972200C867C8 /* AppDelegate.swift */; };
 		9AA8DE872804972200C867C8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA8DE862804972200C867C8 /* SceneDelegate.swift */; };
 		9AA8DE892804972200C867C8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA8DE882804972200C867C8 /* ViewController.swift */; };
@@ -19,6 +21,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		64803F7329F763C80061F1AC /* Loader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loader.swift; sourceTree = "<group>"; };
+		64803F7529F763ED0061F1AC /* Loader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Loader.xib; sourceTree = "<group>"; };
 		9AA8DE812804972200C867C8 /* miniBootcampChallenge.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = miniBootcampChallenge.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9AA8DE842804972200C867C8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9AA8DE862804972200C867C8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -43,6 +47,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		64803F7229F7639D0061F1AC /* Loader */ = {
+			isa = PBXGroup;
+			children = (
+				64803F7329F763C80061F1AC /* Loader.swift */,
+				64803F7529F763ED0061F1AC /* Loader.xib */,
+			);
+			path = Loader;
+			sourceTree = "<group>";
+		};
 		9AA8DE782804972200C867C8 = {
 			isa = PBXGroup;
 			children = (
@@ -62,6 +75,7 @@
 		9AA8DE832804972200C867C8 /* miniBootcampChallenge */ = {
 			isa = PBXGroup;
 			children = (
+				64803F7229F7639D0061F1AC /* Loader */,
 				9AA8DE842804972200C867C8 /* AppDelegate.swift */,
 				9AA8DE862804972200C867C8 /* SceneDelegate.swift */,
 				9AA8DE882804972200C867C8 /* ViewController.swift */,
@@ -135,6 +149,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9AA8DE912804972300C867C8 /* LaunchScreen.storyboard in Resources */,
+				64803F7629F763ED0061F1AC /* Loader.xib in Resources */,
 				9AA8DE8E2804972300C867C8 /* Assets.xcassets in Resources */,
 				9AA8DE8C2804972200C867C8 /* Main.storyboard in Resources */,
 				9AA8DEB72804D91800C867C8 /* Photos.plist in Resources */,
@@ -150,6 +165,7 @@
 			files = (
 				9AA8DE892804972200C867C8 /* ViewController.swift in Sources */,
 				9AA8DEB52804A2E100C867C8 /* ImageCell.swift in Sources */,
+				64803F7429F763C80061F1AC /* Loader.swift in Sources */,
 				9AEB34032805F07F00F764A6 /* URLProvider.swift in Sources */,
 				9AA8DE852804972200C867C8 /* AppDelegate.swift in Sources */,
 				9AA8DE872804972200C867C8 /* SceneDelegate.swift in Sources */,

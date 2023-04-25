@@ -16,12 +16,66 @@ class ViewController: UICollectionViewController {
     }
     
     private lazy var urls: [URL] = URLProvider.urls
+    private var downloadedImages: [UIImage?] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         title = Constants.title
+        loadImages()
     }
-
+    
+    private func showLoader() {
+        let loader = Loader(frame: CGRect.zero)
+        loader.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(loader)
+        
+        NSLayoutConstraint.activate([
+            loader.topAnchor.constraint(equalTo: view.topAnchor),
+            loader.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            loader.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            loader.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+        
+        loader.activityIndicator.startAnimating()
+    }
+    
+    private func hideLoader() {
+        view.subviews.forEach { view in
+            if view is Loader {
+                view.removeFromSuperview()
+            }
+        }
+    }
+    
+    private func loadImages() {
+        showLoader()
+        downloadedImages = Array<UIImage?>(repeating: nil, count: urls.count)
+        let dispatchGroup = DispatchGroup()
+        for (index, url) in urls.enumerated() {
+            loadImage(url, dispatchGroup: dispatchGroup) { [weak self] image in
+                if let image {
+                    self?.downloadedImages[index] = image
+                }
+            }
+        }
+        dispatchGroup.notify(queue: .main) { [weak self] in
+            self?.hideLoader()
+            self?.collectionView.reloadData()
+        }
+    }
+    
+    private func loadImage(_ url: URL, dispatchGroup: DispatchGroup?, completion: @escaping (UIImage?) -> ()) {
+        dispatchGroup?.enter()
+        DispatchQueue.global(qos: .userInitiated).async {
+            guard let data = try? Data(contentsOf: url), let image = UIImage(data: data) else {
+                completion(nil)
+                dispatchGroup?.leave()
+                return
+            }
+            completion(image)
+            dispatchGroup?.leave()
+        }
+    }
 
 }
 
@@ -34,15 +88,13 @@ class ViewController: UICollectionViewController {
 // MARK: - UICollectionView DataSource, Delegate
 extension ViewController {
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        urls.count
+        downloadedImages.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.cellID, for: indexPath) as? ImageCell else { return UICollectionViewCell() }
         
-        let url = urls[indexPath.row]
-        let data = try? Data(contentsOf: url)
-        let image = UIImage(data: data!)
+        let image = downloadedImages[indexPath.row]
         cell.display(image)
         
         return cell
